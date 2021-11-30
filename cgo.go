@@ -6,7 +6,8 @@
 
 package yara
 
-// #cgo !yara_no_pkg_config,!yara_static  pkg-config: yara
+// #cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/libs/darwin/arm64 -lyara -lm -lmagic -ljansson -lz -lbz2 -llzma -lcrypto
+// #cgo darwin,arm64 CFLAGS: -I${SRCDIR}/libs/darwin/arm64/include
 // #cgo !yara_no_pkg_config,yara_static   pkg-config: --static yara
 // #cgo yara_no_pkg_config                LDFLAGS:    -lyara
 /*
