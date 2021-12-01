@@ -1,80 +1,90 @@
-![Logo](/goyara-logo.png)
+![Logo](/yara.png)
 
-# go-yara
+# yara
 
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/hillu/go-yara/v4)](https://pkg.go.dev/github.com/hillu/go-yara/v4)
 [![Travis](https://travis-ci.org/hillu/go-yara.svg?branch=master)](https://travis-ci.org/hillu/go-yara)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hillu/go-yara)](https://goreportcard.com/report/github.com/hillu/go-yara)
 
+This package is original forked from [go-yara](https://github.com/hillu/go-yara) repository.
+
 Go bindings for [YARA](https://virustotal.github.io/yara/), staying as
 close as sensible to the library's C-API while taking inspiration from
-the `yara-python` implementation.
+the `yara-python` implementation. And provides prebuild static libraries.
+
+## Supported Prebuilt Libraries
+- linux/amd64
+- linux/arm64
+- linux(musl)/amd64 (for alpine)
+- linux(musl)/arm64 (for alpine)
+- darwin/arm64
+- `darwin/amd64 (incoming)`
 
 ## Build/Installation
+### Dependencies
+- libmagic
+- libbz2
+- liblzma
+- libcrypto
+- libjansson
 
-On Unix-like systems, _libyara_ version 4.1, corresponding header files,
-and _pkg-config_ must be installed. Adding _go-yara_ v4 to a project
-with Go Modules enabled, simply add the proper dependency…
-
-``` go
-import "github.com/hillu/go-yara/v4"
+### Generic Linux
+Add v0.4.1 yara package to your go.mod file
+```text
+require (
+	github.com/derekhjray/yara v0.4.1
+)
 ```
+And import the package where you need it
+```go
+import (
+    "github.com/derekhjray/yara"
+)
+```
+### Alpine Linux (musl)
+Add v1.4.1 yara package to your go.mod file
+```
+require (
+	github.com/derekhjray/yara v1.4.1
+)
+```
+And import the package where you need it
+```go
+import (
+    "github.com/derekhjray/yara"
+)
+```
+### OSX Darwin
+Either of ways above will be ok
 
-…and rebuild your package.
-
-If _libyara_ has been installed to a custom location, the
-`PKG_CONFIG_PATH` environment variable can be used to point
-_pkg-config_ at the right `yara.pc` file.
-
-For anything more complicated, refer to the "Build Tags" section
-below. Instructions for cross-building _go-yara_ for different
-operating systems or architectures can be found in
-[README.cross-building.md](README.cross-building.md).
-
-To build _go-yara_ on Windows, a GCC-based build environment is
-required, preferably one that includes _pkg-config_. The 32-bit and
-64-bit MinGW environments provided by the [MSYS2](https://msys2.org/)
-provide such an environment.
-
-## Build Tags
-
-### Static builds
-
-The build tag `yara_static` can be used to tell the Go toolchain to
-run _pkg-config_ with the `--static` switch. This is not enough for a
-static build; the appropriate linker flags (e.g. `-extldflags
-"-static"`) still need to be passed to the _go_ tool.
-
-### Building without _pkg-config_
-
-The build tag `yara_no_pkg_config` can be used to tell the Go toolchain not
-to use _pkg-config_'s output. In this case, any compiler or linker
+### User Custom Libraries
+The build tag `user_libs` can be used to tell the Go toolchain to use user customized
+libraries. In this case, any compiler or linker
 flags have to be set via the `CGO_CFLAGS` and `CGO_LDFLAGS`
 environment variables, e.g.:
-
 ```
 export CGO_CFLAGS="-I${YARA_SRC}/libyara/include"
 export CGO_LDFLAGS="-L${YARA_SRC}/libyara/.libs -lyara"
-go install -tags yara_no_pkg_config github.com/hillu/go-yara
+go install -tags user_libs github.com/derekhjray/yara
 ```
+…and rebuild your package.
 
-## YARA 4.1.x vs. earlier versions
+## Version Definitions
+`Major` represents prebuilt library type
+- 0 presents `Generic Linux` and `Darwin` platform
+- 1 presents `Alpine Linux` and `Darwin` platform
 
-This version of _go-yara_ can only be used with YARA 4.1 or later.
+`Minor` represents _YAYA_'s Major version
 
-Version of _go-yara_ compatible with YARA 4.0.x are available via the
-`v4.0.x` branch or tagged `v4.0.*` releases.
+`Patch` represents _YAYA_'s Minor version
 
-Versions of _go-yara_ compatible with YARA 3.11 are available via the
-`v3.x` branch or tagged `v3.*` releases.
-
-Versions of _go-yara_ compatible with earlier 3.x versions of YARA are
-available via the `v1.x` branch or tagged `v1.*` releases.
+_YARA_'s patch version will be omitted.
 
 ## License
 
 BSD 2-clause, see LICENSE file in the source distribution.
 
 ## Author
+Derek Ray <<derekhjray@gmail.com>>
 
 Hilko Bengen <<bengen@hilluzination.de>>
